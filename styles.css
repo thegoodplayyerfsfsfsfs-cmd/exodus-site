@@ -1,8 +1,9 @@
 :root{
-  --bg:#0f1724;
-  --card:#111827;
+  --bg:#0b1220;
+  --card:#0f1724;
   --muted:#9aa4b2;
   --accent:#6ee7b7;
+  --accent-2:#7c3aed;
   --glass: rgba(255,255,255,0.02);
   --glass-2: rgba(255,255,255,0.03);
 }
@@ -12,15 +13,15 @@ html,body,#root{height:100%}
 body{
   margin:0;
   font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background: linear-gradient(180deg,#0b1020 0%, #0f1724 100%);
+  background: linear-gradient(180deg,#071022 0%, #0b1220 100%);
   color: #e6eef6;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
-  padding: 20px;
+  padding: env(safe-area-inset-top,20px) env(safe-area-inset-right,16px) env(safe-area-inset-bottom,20px) env(safe-area-inset-left,16px);
 }
 
 .container{
-  max-width:1100px;
+  max-width:980px;
   margin: 0 auto;
 }
 
@@ -28,44 +29,37 @@ body{
   display:flex;
   gap:16px;
   align-items:center;
-  margin-bottom:24px;
+  margin-bottom:18px;
 }
 
 .logo {
   width:56px;
   height:56px;
-  background:var(--glass);
+  background:linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   display:flex;
   align-items:center;
   justify-content:center;
-  border-radius:12px;
+  border-radius:14px;
   overflow:hidden;
 }
 
 .brand-title{
-  font-weight:700;
+  font-weight:800;
   font-size:20px;
-}
-
-.top-row{
-  display:flex;
-  gap:20px;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:20px;
+  letter-spacing:0.2px;
 }
 
 .card{
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border-radius:12px;
-  padding:16px;
-  box-shadow: 0 4px 20px rgba(2,6,23,0.6);
+  border-radius:14px;
+  padding:14px;
+  box-shadow: 0 8px 30px rgba(2,6,23,0.6);
 }
 
 .grid{
   display:grid;
-  grid-template-columns: 1fr 380px;
-  gap:20px;
+  grid-template-columns: 1fr 320px;
+  gap:16px;
   align-items:start;
 }
 
@@ -80,10 +74,12 @@ body{
   background:var(--accent);
   color:#082018;
   border:0;
-  padding:10px 14px;
-  border-radius:10px;
-  font-weight:600;
+  padding:12px 16px;
+  border-radius:12px;
+  font-weight:700;
   cursor:pointer;
+  font-size:15px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn.blue{background:#3b82f6;color:#fff}
@@ -99,7 +95,7 @@ body{
   display:flex;
   flex-direction:column;
   gap:10px;
-  margin-top:14px;
+  margin-top:12px;
   max-height:520px;
   overflow:auto;
 }
@@ -110,7 +106,7 @@ body{
   justify-content:space-between;
   gap:12px;
   padding:12px;
-  border-radius:8px;
+  border-radius:12px;
   background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
 }
 
@@ -121,8 +117,27 @@ body{
 }
 
 .token-icon{
-  width:44px;height:44px;border-radius:8px;background:var(--glass-2);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);
+  width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#071022;font-size:14px;
 }
 
-.token-name{font-weight:600}
+.token-name{font-weight:700}
 .token-balance{color:var(--muted);font-size:13px}
+
+/* mobile adjustments */
+@media (max-width:700px){
+  .grid{ grid-template-columns: 1fr; }
+  aside{ order:2 }
+  main .card{ margin-bottom:12px }
+}
+
+/* Splash screen */
+.splash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#071022,#081427);z-index:9999}
+.splash-inner{display:flex;flex-direction:column;align-items:center;gap:12px}
+.splash-logo{width:84px;height:84px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#071022;font-size:28px}
+.splash-title{font-weight:800;font-size:20px}
+.splash-sub{color:var(--muted);font-size:13px}
+.loader{display:flex;gap:6px;margin-top:6px}
+.loader span{width:8px;height:8px;background:rgba(255,255,255,0.12);border-radius:100px;display:inline-block;animation:dot 1s infinite}
+.loader span:nth-child(2){animation-delay:.12s}
+.loader span:nth-child(3){animation-delay:.24s}
+@keyframes dot{50%{background:var(--accent);transform:translateY(-6px)}}

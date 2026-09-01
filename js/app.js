@@ -1,5 +1,4 @@
-// Simple static demo app JS
-// No external dependencies. Generates a pseudo-mnemonic and pseudo-address for local demo.
+// Enhanced mobile-friendly app JS with splash screen + PWA support
 
 const tokens = [
   { symbol: 'BTC', name: 'Bitcoin', price: 27563.12 },
@@ -21,10 +20,7 @@ const tokens = [
   { symbol: 'TRX', name: 'Tron', price: 0.081 },
   { symbol: 'NEAR', name: 'NEAR', price: 2.58 },
   { symbol: 'ATOM', name: 'Cosmos', price: 10.22 },
-  { symbol: 'FTT', name: 'FTX Token', price: 2.14 },
-  { symbol: 'ICP', name: 'Internet Computer', price: 4.12 },
   { symbol: 'ALGO', name: 'Algorand', price: 0.16 },
-  { symbol: 'VET', name: 'VeChain', price: 0.03 },
   { symbol: 'FIL', name: 'Filecoin', price: 4.40 },
   { symbol: 'AAVE', name: 'Aave', price: 65.10 },
   { symbol: 'SUSHI', name: 'SushiSwap', price: 1.88 }
@@ -35,10 +31,16 @@ function randInt(n){ return Math.floor(Math.random()*n) }
 function toHex(len){ let s='';const chars='0123456789abcdef'; for(let i=0;i<len;i++) s+=chars[randInt(chars.length)]; return s }
 
 function generateMnemonic(){
-  // very simple pseudo-mnemonic (not BIP39)
-  const wordlist = ['apple','orange','banana','grape','peach','lemon','mango','berry','kiwi','melon','pear','plum','lime','apricot','date','fig','coconut','papaya','guava','nectarine','olive','pear','quince','raisin','currant','cherry','berry']
+  // improved pseudo-mnemonic (still not BIP39): combine entropy + wordlist
+  const wordlist = ['apple','orange','banana','grape','peach','lemon','mango','berry','kiwi','melon','pear','plum','lime','apricot','date','fig','coconut','papaya','guava','nectarine','olive','quince','raisin','currant','cherry']
   const words = []
-  for(let i=0;i<12;i++) words.push(wordlist[randInt(wordlist.length)])
+  // mix crypto API entropy when available
+  let entropy = new Uint8Array(16)
+  try { window.crypto.getRandomValues(entropy) } catch(e) { for(let i=0;i<16;i++) entropy[i]=Math.floor(Math.random()*256) }
+  for(let i=0;i<12;i++){
+    const idx = entropy[i] % wordlist.length
+    words.push(wordlist[idx])
+  }
   return words.join(' ')
 }
 
@@ -111,6 +113,18 @@ function resetDemo(){
   location.reload()
 }
 
+function hideSplash(){
+  const splash = document.getElementById('splash')
+  const app = document.getElementById('app')
+  if(splash){
+    splash.style.transition = 'opacity 300ms ease'
+    splash.style.opacity = '0'
+    setTimeout(()=>{ splash.style.display='none'; app.style.display='block'; }, 350)
+  } else {
+    app.style.display='block'
+  }
+}
+
 function init(){
   // wire buttons
   document.getElementById('create-wallet').addEventListener('click', createWallet)
@@ -126,6 +140,9 @@ function init(){
   const storedMnemonic = localStorage.getItem('exodus.mnemonic')
   if(storedAddr) setAccount(storedAddr, storedMnemonic)
   renderPortfolio()
+
+  // small UX: hide splash after assets ready
+  setTimeout(hideSplash, 800)
 }
 
 window.addEventListener('DOMContentLoaded', init)
