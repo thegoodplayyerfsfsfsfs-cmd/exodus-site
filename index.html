@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>exodus</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="logo card">
+            <!-- Replace with your logo at branding/logo.png -->
+            <img src="branding/logo.png" alt="logo" id="site-logo" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'" />
+            <div id="logo-fallback" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;display:flex;font-weight:700;color:var(--accent)">EX</div>
+          </div>
+          <div>
+            <div class="brand-title">exodus</div>
+            <div class="small">Clean demo wallet</div>
+          </div>
+        </div>
+        <div style="margin-left:auto" class="small" id="local-status">Local demo</div>
+      </header>
+
+      <div class="grid">
+        <div>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:14px;color:#9aa4b2">Total portfolio</div>
+                <div style="font-size:28px;font-weight:700" id="portfolio-total">$0.00</div>
+              </div>
+              <div class="onboard">
+                <div>
+                  <div style="font-size:13px;color:#9aa4b2">Onboarding</div>
+                  <div style="font-weight:700" id="onboard-status">No wallet</div>
+                </div>
+                <div style="display:flex;gap:8px">
+                  <button class="btn" id="create-wallet">Create wallet</button>
+                  <button class="btn blue" id="import-wallet">Import</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:20px"></div>
+
+          <div class="card">
+            <h3 style="margin:0">Tokens</h3>
+            <div class="portfolio-list" id="tokens-list"></div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="card" style="margin-bottom:16px">
+            <h4 style="margin:0">Account</h4>
+            <div style="margin-top:12px">
+              <div class="small">Address</div>
+              <div style="word-break:break-all;margin-top:6px" id="account-address">— not created —</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4 style="margin:0">Quick actions</h4>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+              <button class="btn" id="swap-btn">Swap</button>
+              <button class="btn amber" id="receive-btn">Receive</button>
+              <button class="btn red" id="reset-btn">Reset</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <footer style="margin-top:28px;text-align:center;color:var(--muted);font-size:13px">Built for personal use</footer>
+    </div>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
