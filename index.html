@@ -25,10 +25,10 @@
     <div id="app" class="app-root" style="display:none">
       <div class="screen">
         <div class="nav">
-          <button id="back-btn" class="icon back">←</button>
-          <div class="segmented">
-            <button class="seg active" data-mode="buy">Buy</button>
-            <button class="seg" data-mode="sell">Sell</button>
+          <button id="back-btn" class="icon back" aria-label="History">←</button>
+          <div class="segmented" role="tablist">
+            <button class="seg active" data-mode="buy" role="tab">Buy</button>
+            <button class="seg" data-mode="sell" role="tab">Sell</button>
           </div>
         </div>
 
@@ -39,7 +39,7 @@
 
         <div class="swap-panel card" id="swap-panel">
           <div class="row from-row">
-            <div class="token-pill" id="from-pill">
+            <div class="token-pill" id="from-pill" role="button" tabindex="0">
               <div class="token-icon" id="from-icon">₿</div>
               <div class="token-info">
                 <div class="token-symbol" id="from-symbol">BTC <span class="caret">▾</span></div>
@@ -52,16 +52,19 @@
           </div>
 
           <div class="divider">
-            <button class="swap-center" id="swap-center">⇅</button>
-            <div class="divider-bar"></div>
-            <div class="curve-slider" id="curve-slider">
+            <button class="swap-center" id="swap-center" aria-label="Swap">⇅</button>
+            <div class="divider-bar" aria-hidden="true"></div>
+            <div class="curve-slider" id="curve-slider" aria-hidden="false">
+              <!-- SVG curve is rendered via CSS background; ticks are decorative -->
               <div class="ticks" aria-hidden="true"></div>
-              <div class="knob" id="knob" draggable="true" role="slider" aria-valuemin="50" aria-valuemax="500" aria-valuenow="50"></div>
+              <div class="knob" id="knob" draggable="true" role="slider" aria-valuemin="50" aria-valuemax="500" aria-valuenow="50" tabindex="0"></div>
+              <div class="tick-label left-label">$50</div>
+              <div class="tick-label right-label">$500</div>
             </div>
           </div>
 
           <div class="row to-row">
-            <div class="token-pill" id="to-pill">
+            <div class="token-pill" id="to-pill" role="button" tabindex="0">
               <div class="token-icon eth" id="to-icon">Ξ</div>
               <div class="token-info">
                 <div class="token-symbol" id="to-symbol">ETH <span class="caret">▾</span></div>
@@ -84,7 +87,7 @@
         <div class="notice" id="notice">Swap services are available through third‑party providers.</div>
 
         <div class="bottom-swap card">
-          <div class="bottom-pill" id="bottom-pill">
+          <div class="bottom-pill" id="bottom-pill" role="button" tabindex="0">
             <div class="left-coin" id="left-coin">$</div>
             <div class="arrow-set"><div class="arrow arrow-up"></div><div class="arrow arrow-down"></div></div>
             <div class="right-coin" id="right-coin">◻</div>
@@ -94,10 +97,31 @@
 
       <!-- token picker modal -->
       <div id="token-modal" class="modal" aria-hidden="true">
-        <div class="modal-inner card">
-          <input id="token-search" placeholder="Search tokens" class="search" />
-          <div id="token-list" class="token-list"></div>
+        <div class="modal-inner card" role="dialog" aria-modal="true" aria-label="Select token">
+          <input id="token-search" placeholder="Search tokens" class="search" aria-label="Search tokens" />
+          <div id="token-list" class="token-list" role="list"></div>
           <button id="close-modal" class="pill" style="margin-top:12px">Close</button>
+        </div>
+      </div>
+
+      <!-- confirm modal -->
+      <div id="confirm-modal" class="modal" aria-hidden="true">
+        <div class="modal-inner card" role="dialog" aria-modal="true" aria-label="Confirm swap">
+          <h3 id="confirm-title">Confirm swap</h3>
+          <div id="confirm-body" style="margin-top:8px"></div>
+          <div style="display:flex;gap:10px;margin-top:12px">
+            <button id="confirm-cancel" class="pill" style="flex:1">Cancel</button>
+            <button id="confirm-ok" class="btn" style="flex:1">Confirm</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- history modal -->
+      <div id="history-modal" class="modal" aria-hidden="true">
+        <div class="modal-inner card" role="dialog" aria-modal="true" aria-label="Transaction history">
+          <h3>Transaction history</h3>
+          <div id="history-list" class="token-list" style="margin-top:8px"></div>
+          <button id="close-history" class="pill" style="margin-top:12px">Close</button>
         </div>
       </div>
 
