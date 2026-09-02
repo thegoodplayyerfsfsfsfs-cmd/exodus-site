@@ -1,22 +1,29 @@
-# exodus — enhanced mobile-ready static site
+# exodus — enhanced mobile-ready static site (PWA)
 
-I updated the static site to be mobile-first with iPhone installability and a nicer loading experience.
+This repository contains a mobile-first static site named "exodus". It is optimized for iPhone Add-to-Home-Screen and includes client-side seed encryption and a polished splash animation.
 
-What's changed
-- Added a lightweight splash/loading screen (splash shows while assets are prepared)
-- Updated styles to be mobile-first, improved touch targets and typography for iPhone
-- Added a manifest.json so the site can be installed as a PWA (Add to Home Screen on iOS/Android)
-- Added a basic service worker (sw.js) that caches core assets for offline viewing
-- Updated the header text and layout for cleaner mobile UX
+What’s included (highlights)
+- Mobile-first UI with large touch targets and safe-area support
+- PWA manifest and basic service worker for offline caching
+- Splash screen / loader for app-like launch experience
+- Client-side seed encryption: optionally protect your mnemonic with a passphrase (uses Web Crypto PBKDF2 + AES-GCM)
+- Tokens & balances are simulated locally for personal/demo use
+- No server; everything runs in the browser and stores data in localStorage (optionally encrypted)
 
-Notes on icons
-- I intentionally did not generate new icon sizes — the site references `/branding/logo.png` for the app icon and the Apple touch icon. Replace that file with a square PNG (>= 192px) for best results.
+Important security notes
+- If you choose to protect your seed with a passphrase, the encryption is performed locally in your browser. Keep your passphrase safe — losing it means you cannot decrypt your seed.
+- This project is a demo. Do NOT use real funds unless you know what you’re doing and are willing to accept the risks of an un-audited client.
 
-Deploying
-- Download the repo ZIP (https://github.com/thegoodplayyerfsfsfsfs-cmd/exodus-site/archive/refs/heads/main.zip) and upload the repository files to your host.
-- For iPhone: open the site in Safari, tap Share → Add to Home Screen. The app will launch in standalone mode (status bar translucent).
+Download & deploy
+- Download the repo ZIP: https://github.com/thegoodplayyerfsfsfsfs-cmd/exodus-site/archive/refs/heads/main.zip
+- Upload the repository files to your static host (Netlify, Vercel, cPanel, FTP).
 
-If you want I can:
-- Produce a single ZIP with the repo updated and attach it here for direct download.
-- Generate proper icons from your uploaded logo (different sizes + iOS splash assets) and add them.
-- Tweak colors, fonts, or animations to match a specific style.
+iPhone install
+- Open the deployed site in Safari. Tap Share → Add to Home Screen.
+
+If you want me to:
+- Generate all app icon sizes + iOS splash images from your uploaded logo and add them to the project, I can do that next.
+- Wrap the site in Capacitor for a native iOS build (requires an Apple developer account).
+- Enable Ethereum testnet signing (needs ethers.js and careful warnings).
+
+Tell me if you want the icon generation and I’ll proceed to add crisp icons and a single downloadable ZIP optimized for phone upload.
