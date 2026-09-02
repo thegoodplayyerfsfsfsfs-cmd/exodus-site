@@ -13,65 +13,94 @@
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
-    <div id="splash" class="splash"><div class="splash-inner"><div class="splash-logo">EX</div><div class="splash-title">exodus</div><div class="splash-sub">clean • mobile-first • private</div><div class="loader" aria-hidden="true"><span></span><span></span><span></span></div></div></div>
+    <div id="splash" class="splash">
+      <div class="splash-inner">
+        <div class="splash-logo">EX</div>
+        <div class="splash-title">exodus</div>
+        <div class="splash-sub">clean • mobile‑first • private</div>
+        <div class="loader" aria-hidden="true"><span></span><span></span><span></span></div>
+      </div>
+    </div>
 
     <div id="app" class="app-root" style="display:none">
       <div class="screen">
-        <div class="top-area">
-          <div class="top-left small">I have 0 Bitcoin</div>
-          <div class="top-right small">0 BTC</div>
+        <div class="nav">
+          <button id="back-btn" class="icon back">←</button>
+          <div class="segmented">
+            <button class="seg active" data-mode="buy">Buy</button>
+            <button class="seg" data-mode="sell">Sell</button>
+          </div>
         </div>
 
-        <div class="swap-panel card">
+        <div class="top-area">
+          <div class="top-left small" id="top-balance">I have 0 Bitcoin</div>
+          <div class="top-right small" id="top-amount">0 BTC</div>
+        </div>
+
+        <div class="swap-panel card" id="swap-panel">
           <div class="row from-row">
-            <div class="token-pill">
-              <div class="token-icon">₿</div>
+            <div class="token-pill" id="from-pill">
+              <div class="token-icon" id="from-icon">₿</div>
               <div class="token-info">
-                <div class="token-symbol">BTC <span class="caret">▾</span></div>
+                <div class="token-symbol" id="from-symbol">BTC <span class="caret">▾</span></div>
               </div>
             </div>
             <div class="amount">
               <div class="currency">$</div>
-              <div class="big-amount">0.00</div>
+              <div class="big-amount" id="usd-amount">0</div>
             </div>
           </div>
 
           <div class="divider">
             <button class="swap-center" id="swap-center">⇅</button>
             <div class="divider-bar"></div>
+            <div class="curve-slider" id="curve-slider">
+              <div class="ticks" aria-hidden="true"></div>
+              <div class="knob" id="knob" draggable="true" role="slider" aria-valuemin="50" aria-valuemax="500" aria-valuenow="50"></div>
+            </div>
           </div>
 
           <div class="row to-row">
-            <div class="token-pill">
-              <div class="token-icon eth">Ξ</div>
+            <div class="token-pill" id="to-pill">
+              <div class="token-icon eth" id="to-icon">Ξ</div>
               <div class="token-info">
-                <div class="token-symbol">ETH <span class="caret">▾</span></div>
+                <div class="token-symbol" id="to-symbol">ETH <span class="caret">▾</span></div>
               </div>
             </div>
             <div class="amount">
               <div class="currency">$</div>
-              <div class="big-amount">0.00</div>
+              <div class="big-amount" id="receive-amount">0</div>
             </div>
           </div>
 
           <div class="minmax">
-            <button class="pill">Min</button>
-            <button class="pill">Max</button>
+            <button class="pill" id="min-btn">Min</button>
+            <button class="pill" id="max-btn">Max</button>
           </div>
         </div>
 
         <div class="spacer"></div>
 
-        <div class="notice">Swap services are available through third‑party providers.</div>
+        <div class="notice" id="notice">Swap services are available through third‑party providers.</div>
 
         <div class="bottom-swap card">
-          <div class="bottom-pill">
-            <div class="left-coin">$</div>
+          <div class="bottom-pill" id="bottom-pill">
+            <div class="left-coin" id="left-coin">$</div>
             <div class="arrow-set"><div class="arrow arrow-up"></div><div class="arrow arrow-down"></div></div>
-            <div class="right-coin">◻</div>
+            <div class="right-coin" id="right-coin">◻</div>
           </div>
         </div>
       </div>
+
+      <!-- token picker modal -->
+      <div id="token-modal" class="modal" aria-hidden="true">
+        <div class="modal-inner card">
+          <input id="token-search" placeholder="Search tokens" class="search" />
+          <div id="token-list" class="token-list"></div>
+          <button id="close-modal" class="pill" style="margin-top:12px">Close</button>
+        </div>
+      </div>
+
     </div>
 
     <script src="/js/app.js"></script>
