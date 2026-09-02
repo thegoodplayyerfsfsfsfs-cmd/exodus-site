@@ -1,4 +1,4 @@
-// app.js v3: live prices, slider, token picker, swap animations
+// app.js v4: add simulated swap execution, balances, transaction history, improved animations
 
 const TOKENS = [
   { symbol: 'BTC', name: 'Bitcoin', coingecko: 'bitcoin', icon: '₿' },
@@ -20,12 +20,21 @@ let state = {
   sliderValue: 0.02, // 0..1 mapped to 50..500 by default
   mode: 'buy',
   prices: {},
+  balances: {},
 }
 
 // Utility
 const $ = s => document.querySelector(s)
 const $$ = s => Array.from(document.querySelectorAll(s))
 function formatCurrency(n){ return Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) }
+
+// initialize balances (persisted)
+function initBalances(){
+  const stored = localStorage.getItem('exodus.balances')
+  if(stored){ state.balances = JSON.parse(stored); return }
+  TOKENS.forEach(t=>{ state.balances[t.symbol] = (Math.random()*3 + 0.1).toFixed(6) })
+  localStorage.setItem('exodus.balances', JSON.stringify(state.balances))
+}
 
 async function fetchPrices(){
   try{
@@ -43,9 +52,10 @@ function updateAmounts(){
   const receive = toPrice>0 ? (usd / toPrice) : 0
   $('#usd-amount').textContent = formatCurrency(usd)
   $('#receive-amount').textContent = formatCurrency(receive)
-  $('#top-balance').textContent = `I have 0 ${state.from.name}`
-  $('#top-amount').textContent = `0 ${state.from.symbol}`
-  // update bottom icons
+  const fromBal = parseFloat(state.balances[state.from.symbol] || 0)
+  $('#top-balance').textContent = `I have ${formatCurrency(fromBal)} ${state.from.name}`
+  $('#top-amount').textContent = `${fromBal.toFixed(6)} ${state.from.symbol}`
+  // update bottom icons & labels
   $('#left-coin').textContent = state.from.icon
   $('#right-coin').textContent = state.to.icon
   $('#from-symbol').innerHTML = `${state.from.symbol} <span class="caret">▾</span>`
@@ -54,8 +64,9 @@ function updateAmounts(){
   $('#to-icon').textContent = state.to.icon
 }
 
+function saveBalances(){ localStorage.setItem('exodus.balances', JSON.stringify(state.balances)) }
+
 function mapSliderToUSD(v){
-  // map 0..1 to 50..500 with easing (exponential feel)
   const min = 50, max = 500
   const val = min + Math.pow(v,1.4)*(max-min)
   return Math.round(val)
@@ -94,7 +105,6 @@ function initSlider(){
     updateFromPos(clientX)
   }))
   ;['touchend','mouseup','mouseleave'].forEach(ev=> window.addEventListener(ev, ()=>{ dragging=false }))
-  // init
   setSliderPositionByValue(state.sliderValue)
   state.usd = mapSliderToUSD(state.sliderValue)
 }
@@ -140,13 +150,27 @@ function initMinMax(){
   $('#max-btn').addEventListener('click', ()=>{ state.sliderValue = 1; state.usd = mapSliderToUSD(1); setSliderPositionByValue(1); updateAmounts() })
 }
 
+function saveTransaction(tx){
+  const hist = JSON.parse(localStorage.getItem('exodus.history') || '[]')
+  hist.unshift(tx)
+  localStorage.setItem('exodus.history', JSON.stringify(hist.slice(0,50)))
+}
+
+function showHistory(){
+  const hist = JSON.parse(localStorage.getItem('exodus.history') || '[]')
+  if(hist.length===0){ alert('No transactions yet') ; return }
+  let out = 'Recent transactions:\n\n'
+  hist.slice(0,10).forEach(h=>{
+    out += `${new Date(h.time).toLocaleString()}: ${h.usd}$ ${h.from}->${h.to} (${h.fromAmount.toFixed(6)} -> ${h.toAmount.toFixed(6)})\n`}
+  )
+  alert(out)
+}
+
 function initSwapCenter(){
   $('#swap-center').addEventListener('click', ()=>{
     const btn = $('#swap-center')
     btn.animate([{transform:'rotate(0deg)'},{transform:'rotate(180deg)'}],{duration:420,fill:'forwards'})
-    // swap tokens
     const tmp = state.from; state.from = state.to; state.to = tmp
-    // animate bottom pill pulse
     $('#bottom-pill').animate([{transform:'scale(1)'},{transform:'scale(1.03)'},{transform:'scale(1)'}],{duration:360})
     updateAmounts()
   })
@@ -157,24 +181,54 @@ function initSegControl(){
     $$('.seg').forEach(x=>x.classList.remove('active'))
     e.currentTarget.classList.add('active')
     state.mode = e.currentTarget.dataset.mode
-    // slight visual change
     $('#notice').textContent = state.mode==='buy' ? 'Buying via third-party providers' : 'Selling via third-party providers'
   }))
 }
 
+function performSimulatedSwap(){
+  const usd = state.usd
+  const fromPrice = state.prices[state.from.symbol] || 1
+  const toPrice = state.prices[state.to.symbol] || 1
+  const fromAmount = usd / fromPrice
+  const toAmount = usd / toPrice
+  const currentFromBal = parseFloat(state.balances[state.from.symbol] || 0)
+  if(currentFromBal + 1e-12 < fromAmount){ alert('Insufficient balance for this swap'); return }
+  // apply swap
+  state.balances[state.from.symbol] = Math.max(0, currentFromBal - fromAmount)
+  state.balances[state.to.symbol] = parseFloat((parseFloat(state.balances[state.to.symbol]||0) + toAmount).toFixed(6))
+  saveBalances()
+  const tx = { time: Date.now(), from: state.from.symbol, to: state.to.symbol, usd, fromAmount, toAmount }
+  saveTransaction(tx)
+  // visual confirmation
+  $('#bottom-pill').animate([{transform:'translateY(0)'},{transform:'translateY(-8px)'},{transform:'translateY(0)'}],{duration:420})
+  alert(`Swap complete:\n${formatCurrency(usd)} USD → ${toAmount.toFixed(6)} ${state.to.symbol}`)
+  updateAmounts()
+}
+
+function initBottomSwap(){
+  $('#bottom-pill').addEventListener('click', ()=>{
+    // open confirm
+    if(!confirm(`Confirm swap ${formatCurrency(state.usd)} USD from ${state.from.symbol} to ${state.to.symbol}?`)) return
+    performSimulatedSwap()
+  })
+}
+
 async function init(){
+  initBalances()
   await fetchPrices()
   initSlider()
   initTokenPicker()
   initMinMax()
   initSwapCenter()
   initSegControl()
+  initBottomSwap()
+  // wire history on back button
+  $('#back-btn').addEventListener('click', ()=> showHistory())
   updateAmounts()
   // hide splash
   const splash = document.getElementById('splash')
   const app = document.getElementById('app')
   setTimeout(()=>{ if(splash){ splash.style.transition='opacity 300ms'; splash.style.opacity='0'; setTimeout(()=>{splash.style.display='none'; app.style.display='block'},350)} else app.style.display='block' }, 600)
-  // refresh prices periodically
   setInterval(async ()=>{ await fetchPrices(); updateAmounts() }, 30000)
 }
 
